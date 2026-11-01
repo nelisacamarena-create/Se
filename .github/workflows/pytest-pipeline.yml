@@ -1,0 +1,32 @@
+name: Automatización de Pruebas Selenium
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Clonar repositorio
+      uses: actions/checkout@v4
+
+    - name: ⚙️ Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: 📦 Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium pytest pytest-html
+
+    - name: 🧪 Ejecutar pruebas con Pytest y generar reporte
+      run: |
+        pytest test_tienda.py --html=reporte_fallos.html --self-contained-html
+
+    - name: 📁 Subir reporte HTML como artefacto
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: reporte-pruebas-html
+        path: reporte_fallos.html
