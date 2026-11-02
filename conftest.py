@@ -1,28 +1,18 @@
 import pytest
 from selenium import webdriver
-import pytest_html
-
-@pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-    """Captura de pantalla automática en caso de fallo"""
-    outcome = yield
-    report = outcome.get_result()
-    extras = getattr(report, "extra", [])
-
-    if report.when == "call" and report.failed:
-        # Acceder al driver desde la fixture
-        driver = item.funcargs['driver']
-        # Convertir la captura a base64 para el reporte HTML
-        screenshot = driver.get_screenshot_as_base64()
-        html = f'<div><img src="data:image/png;base64,{screenshot}" alt="screenshot" style="width:304px;height:228px;" onclick="window.open(this.src)" align="right"/></div>'
-        extras.append(pytest_html.extras.html(html))
-        
-    report.extra = extras
+from selenium.webdriver.chrome.options import Options
 
 @pytest.fixture
-def driver():
-    """Fixture del navegador con maximización de ventana"""
-    driver = webdriver.Chrome()
-    driver.maximize_window()
+def controlador():
+    """Fixture del navegador configurada para entorno local y CI/CD (GitHub Actions)"""
+    opciones = Options()
+    
+    # Opciones indispensables para que corra en el servidor Linux de GitHub Actions
+    opciones.add_argument('--headless=new')
+    opciones.add_argument('--no-sandbox')
+    opciones.add_argument('--disable-dev-shm-usage')
+    opciones.add_argument('--window-size=1920,1080')
+    
+    driver = webdriver.Chrome(options=opciones)
     yield driver
     driver.quit()
