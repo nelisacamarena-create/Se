@@ -6,7 +6,7 @@ def test_login_fallido(controlador):
     driver.get("https://www.saucedemo.com/")
     
     login = LoginPage(driver)
-    login.iniciar_sesion("locked_out_user", "secret_sauce")
+    login.login("locked_out_user", "secret_sauce")  # <--- Cambia iniciar_sesion por el método correcto
     
     # Mensaje de fallo intencional para verificar la captura en el reporte HTML
     assert "Texto inventado que provocará un fallo" in login.obtener_error()
@@ -17,7 +17,7 @@ def test_login_exitoso(controlador):
     driver.get("https://www.saucedemo.com/")
     
     login = LoginPage(driver)
-    login.iniciar_sesion("standard_user", "secret_sauce")
+    login.login("standard_user", "secret_sauce")  # <--- Cambia iniciar_sesion por el método correcto
     
     # Validación de éxito
     assert "inventory.html" in driver.current_url
